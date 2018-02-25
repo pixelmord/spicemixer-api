@@ -13,6 +13,7 @@ import passport from 'passport';
 import expressValidator from 'express-validator';
 import bluebird from 'bluebird';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
+import cors from 'cors';
 
 const MongoStore = mongo(session);
 
@@ -68,6 +69,26 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+
+// Security.
+const allowedOrigins = ['http://localhost:3000', 'https://spicemixer.io'];
+app.use(
+  cors({
+    origin: function(origin, callback) {
+      // allow requests with no origin
+      // (like mobile apps or curl requests)
+      if (!origin) return callback(undefined, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          'The CORS policy for this site does not ' +
+          'allow access from the specified Origin.';
+        return callback(new Error(msg), false);
+      }
+      return callback(undefined, true);
+    }
+  })
+);
+// app.use(lusca.csrf());
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 app.use((req, res, next) => {
