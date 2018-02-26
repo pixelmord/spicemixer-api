@@ -71,7 +71,11 @@ app.use(passport.session());
 app.use(flash());
 
 // Security.
-const allowedOrigins = ['http://localhost:3000', 'https://spicemixer.io'];
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3009',
+  'https://spicemixer.io'
+];
 app.use(
   cors({
     origin: function(origin, callback) {
